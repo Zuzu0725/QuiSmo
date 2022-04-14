@@ -1,10 +1,12 @@
 <template>
-    <div class="container">
-        <h1>Home</h1>
-        <v-icon>
-            mdi-heart
-        </v-icon>
-    </div>
+    <v-container class="mt-3">
+        <v-card
+            elevation="2"
+            class="mx-auto"
+            >
+            <v-card-title>ホーム</v-card-title>
+        </v-card>
+    </v-container>
 </template>
 
 <script>
