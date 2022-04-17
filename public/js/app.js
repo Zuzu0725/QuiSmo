@@ -5277,6 +5277,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
 
 /***/ }),
@@ -28716,12 +28731,23 @@ var render = function () {
     "v-container",
     { staticClass: "mt-3" },
     [
-      _c(
-        "v-card",
-        { staticClass: "mx-auto", attrs: { elevation: "2" } },
-        [_c("v-card-title", [_vm._v("ホーム")])],
-        1
-      ),
+      _c("v-card", { staticClass: "mb-3 pa-5", attrs: { elevation: "2" } }, [
+        _c("div", [_vm._v("あなたの禁煙時間")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "h3 ma-0" }, [_vm._v("3日")]),
+      ]),
+      _vm._v(" "),
+      _c("v-card", { staticClass: "mb-3 pa-5", attrs: { elevation: "2" } }, [
+        _c("div", [_vm._v("禁煙できた本数")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "h3 ma-0" }, [_vm._v("60本")]),
+      ]),
+      _vm._v(" "),
+      _c("v-card", { staticClass: "mb-3 pa-5", attrs: { elevation: "2" } }, [
+        _c("div", [_vm._v("禁煙できた金額")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "h3 ma-0" }, [_vm._v("1500円")]),
+      ]),
     ],
     1
   )
