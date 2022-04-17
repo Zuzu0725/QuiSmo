@@ -14,7 +14,7 @@
 </head>
 <body>
     <div id="app">
-        <router-view />
+        <app-component></app-component>
     </div>
     <!-- Scripts -->
     <script src="{{ mix('/js/app.js') }}" defer></script>
