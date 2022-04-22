@@ -4,9 +4,19 @@
             elevation="2"
             class="mb-3 pa-5"
         >
-            <v-card-title class="justify-center pa-0 mb-3">禁煙日記</v-card-title>
+            <v-card-title class="justify-center pa-0 mb-4">禁煙日記</v-card-title>
+
+            <v-btn
+                outlined
+                rounded
+                color="primary"
+                @click="diaryCreate"
+            >
+                <v-icon>mdi-plus-box-multiple</v-icon>
+                新規登録
+            </v-btn>
             
-            <v-simple-table class="mt-3">
+            <v-simple-table class="mt-2">
                 <template v-slot:default>
                     <thead>
                         <tr>
@@ -28,9 +38,24 @@
                         >
                             <td>{{ diary.date }}</td>
                             <td>
-                                <v-icon v-if="diary.status === 1">mdi-emoticon</v-icon>
-                                <v-icon v-else-if="diary.status === 2">mdi-emoticon-neutral</v-icon>
-                                <v-icon v-else>mdi-emoticon-frown</v-icon>
+                                <v-icon
+                                    v-if="diary.status === 1"
+                                    color="red accent-2"
+                                >
+                                    mdi-emoticon
+                                </v-icon>
+                                <v-icon
+                                    v-else-if="diary.status === 2"
+                                    color="grey lighten-1"
+                                >
+                                    mdi-emoticon-neutral
+                                </v-icon>
+                                <v-icon
+                                    v-else
+                                    color="indigo accent-2"
+                                >
+                                    mdi-emoticon-frown
+                                </v-icon>
                             </td>
                             <td>{{ diary.comment }}</td>
                         </tr>
@@ -66,6 +91,11 @@ export default {
                     comment: '飲みの場で吸ってしまった'
                 }
             ]
+        }
+    },
+    methods: {
+        diaryCreate() {
+            this.$router.push('/diary/create')
         }
     }
 }

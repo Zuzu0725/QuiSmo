@@ -5,6 +5,7 @@ Vue.use(VueRouter);
 
 import HomeComponent from "./components/HomeComponent.vue";
 import DiaryComponent from "./components/diarys/DiaryComponent.vue";
+import DiaryCreateComponent from "./components/diarys/DiaryCreateComponent.vue";
 
 const router = new VueRouter({
     mode: "history",
@@ -18,7 +19,12 @@ const router = new VueRouter({
             path: "/diary",
             name: "diary",
             component: DiaryComponent
-        }
+        },
+        {
+            path: "/diary/create",
+            name: "diary.create",
+            component: DiaryCreateComponent
+        },
     ]
 });
 
