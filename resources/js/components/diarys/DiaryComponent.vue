@@ -32,9 +32,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
                         <tr
-                        v-for="diary in diarys"
-                        :key="diary.id"
+                            v-for="diary in diaries"
+                            :key="diary.id"
+                            @click="showDiary(diary.id)"
                         >
                             <td>{{ diary.date }}</td>
                             <td>
@@ -59,19 +61,42 @@
                             </td>
                             <td>{{ diary.comment }}</td>
                         </tr>
+                        
                     </tbody>
                 </template>
             </v-simple-table>
+            <v-dialog
+                v-model="dialog"
+                width="500"
+            >
+                <diary-show
+                    :dialogItems="dialogItems"
+                    @close="closeDialog"
+                    @edit="moveEdit"
+                ></diary-show>
+            </v-dialog>
         </v-card>
     </v-container>
 </template>
 
 <script>
+import DiaryShow from "../diarys/DiaryShowComponent.vue"
 
 export default {
+    components: {
+        'diary-show': DiaryShow,
+    },
     data() {
         return {
-            diarys: [
+            dialog: false,
+            dialogItems: {
+                id: Number,
+                date: String,
+                status: Number,
+                comment: String
+            },
+            diaryIndex: -1,
+            diaries: [
                 {
                     id: 1,
                     date: '2022-04-17',
@@ -96,6 +121,29 @@ export default {
     methods: {
         diaryCreate() {
             this.$router.push('/diary/create')
+        },
+        showDiary(id){
+            this.dialog = true
+            this.diaryIndex = id -1
+            this.dialogItems.id = this.diaries[this.diaryIndex].id
+            this.dialogItems.date = this.diaries[this.diaryIndex].date
+            this.dialogItems.status = this.diaries[this.diaryIndex].status
+            this.dialogItems.comment = this.diaries[this.diaryIndex].comment
+        },
+        closeDialog() {
+            this.dialog = false
+        },
+        moveEdit(id) {
+            this.diaryIndex = id -1
+            this.$router.push({
+                name: 'diary.edit',
+                params: {
+                    id: this.diaries[this.diaryIndex].id,
+                    date: this.diaries[this.diaryIndex].date,
+                    status: this.diaries[this.diaryIndex].status,
+                    comment: this.diaries[this.diaryIndex].comment,
+                }
+            })
         }
     }
 }
