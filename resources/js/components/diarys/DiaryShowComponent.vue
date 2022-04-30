@@ -1,5 +1,4 @@
 <template>
-    
         <v-card>
             <v-toolbar
                 color="grey lighten-3"

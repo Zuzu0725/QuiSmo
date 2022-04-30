@@ -7,7 +7,44 @@
             <v-card-title class="justify-center pa-0 mb-5">日記登録</v-card-title>
 
             <v-form>
-                <DatePicker />
+                <v-menu
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                >
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                            v-model="date"
+                            label="日付"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                        ></v-text-field>
+                    </template>
+                    <v-date-picker
+                        v-model="date"
+                        no-title
+                        scrollable
+                        color="red accent-2"
+                    >
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            text
+                            color="primary"
+                            @click="menu = false"
+                        >
+                            Cancel
+                        </v-btn>
+                        <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.menu.save(date)"
+                        >
+                            OK
+                        </v-btn>
+                    </v-date-picker>
+                </v-menu>
 
                 <p class="mb-0" style="color: #616161;">気分</p>
                 <v-btn-toggle
@@ -49,13 +86,11 @@
 </template>
 
 <script>
-import DatePicker from "../layouts/DatePickerComponent.vue"
 export default {
-    components: {
-        DatePicker
-    },
-    date() {
+    data() {
         return {
+            date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            menu: false,
         }
     }
 }
