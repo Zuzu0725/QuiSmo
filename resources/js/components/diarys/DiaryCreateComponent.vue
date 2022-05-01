@@ -6,7 +6,10 @@
         >
             <v-card-title class="justify-center pa-0 mb-5">日記登録</v-card-title>
 
-            <v-form>
+            <v-form
+                ref="form"
+                @submit.prevent
+            >
                 <v-menu
                     transition="scale-transition"
                     offset-y
@@ -14,7 +17,7 @@
                 >
                     <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                            v-model="date"
+                            v-model="diary.date"
                             label="日付"
                             prepend-icon="mdi-calendar"
                             readonly
@@ -23,27 +26,11 @@
                         ></v-text-field>
                     </template>
                     <v-date-picker
-                        v-model="date"
+                        v-model="diary.date"
                         no-title
                         scrollable
                         color="red accent-2"
-                    >
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            text
-                            color="primary"
-                            @click="menu = false"
-                        >
-                            Cancel
-                        </v-btn>
-                        <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.menu.save(date)"
-                        >
-                            OK
-                        </v-btn>
-                    </v-date-picker>
+                    ></v-date-picker>
                 </v-menu>
 
                 <p class="mb-0" style="color: #616161;">気分</p>
@@ -51,26 +38,28 @@
                     color="primary"
                     dense
                     group
+                    v-model="diary.status"
                 >
-                    <v-btn icon>
+                    <v-btn icon value="1">
                         <v-icon>mdi-emoticon</v-icon>
                     </v-btn>
-                    <v-btn icon>
+                    <v-btn icon value="2">
                         <v-icon>mdi-emoticon-neutral</v-icon>
                     </v-btn>
-                    <v-btn icon>
+                    <v-btn icon value="3">
                         <v-icon>mdi-emoticon-frown</v-icon>
                     </v-btn>
                 </v-btn-toggle>
                 <v-textarea
                     label="コメント"
                     prepend-icon="mdi-comment"
+                    v-model="diary.comment"
                 ></v-textarea>
                 
                     <v-btn
                         depressed
                         color="primary"
-                        
+                        @click="submit"
                     >
                         登録する
                     </v-btn>
@@ -89,8 +78,18 @@
 export default {
     data() {
         return {
-            date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            diary: {
+                date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            },
             menu: false,
+        }
+    },
+    methods: {
+        submit() {
+            axios.post('/api/diaries', this.diary)
+                .then((res) => {
+                    this.$router.push('/diaries');
+                })
         }
     }
 }

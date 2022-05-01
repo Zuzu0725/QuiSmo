@@ -5,6 +5,13 @@
                 flat
             >
                 <v-toolbar-title>{{ dialogItems.date }}</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn
+                    icon
+                    @click="$emit('delete', dialogItems.id)"
+                >
+                    <v-icon>mdi-delete</v-icon>
+                </v-btn>
             </v-toolbar>
             <v-container class="pa-4">
                 <div class="mb-2">

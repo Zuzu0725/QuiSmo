@@ -73,6 +73,7 @@
                     :dialogItems="dialogItems"
                     @close="closeDialog"
                     @edit="moveEdit"
+                    @delete="deleteDiary"
                 ></diary-show>
             </v-dialog>
         </v-card>
@@ -88,63 +89,49 @@ export default {
     },
     data() {
         return {
+            diaries: [],
+            dialogItems: {},
             dialog: false,
-            dialogItems: {
-                id: Number,
-                date: String,
-                status: Number,
-                comment: String
-            },
-            diaryIndex: -1,
-            diaries: [
-                {
-                    id: 1,
-                    date: '2022-04-17',
-                    status: 1,
-                    comment: '問題なし'
-                },
-                {
-                    id: 2,
-                    date: '2022-04-18',
-                    status: 2,
-                    comment: '食後に吸いたくなった'
-                },
-                {
-                    id: 3,
-                    date: '2022-04-19',
-                    status: 3,
-                    comment: '飲みの場で吸ってしまった'
-                }
-            ]
         }
     },
     methods: {
-        diaryCreate() {
-            this.$router.push('/diary/create')
+        // 日記情報取得
+        getDiaries() {
+            axios.get('/api/diaries')
+                .then((res) => {
+                    this.diaries = res.data;
+                });
         },
+        // 日記作成コンポーネントへの遷移
+        diaryCreate() {
+            this.$router.push('/diaries/create')
+        },
+        // 日記詳細ダイアログ
         showDiary(id){
             this.dialog = true
-            this.diaryIndex = id -1
-            this.dialogItems.id = this.diaries[this.diaryIndex].id
-            this.dialogItems.date = this.diaries[this.diaryIndex].date
-            this.dialogItems.status = this.diaries[this.diaryIndex].status
-            this.dialogItems.comment = this.diaries[this.diaryIndex].comment
+            axios.get('/api/diaries/' + id)
+                .then((res) => {
+                    this.dialogItems = res.data;
+                });
         },
         closeDialog() {
             this.dialog = false
         },
+        // 日記編集画面へ遷移
         moveEdit(id) {
-            this.diaryIndex = id -1
-            this.$router.push({
-                name: 'diary.edit',
-                params: {
-                    id: this.diaries[this.diaryIndex].id,
-                    date: this.diaries[this.diaryIndex].date,
-                    status: this.diaries[this.diaryIndex].status,
-                    comment: this.diaries[this.diaryIndex].comment,
-                }
-            })
+            this.$router.push({name: 'diary.edit', params: {diaryId: id}})
+        },
+        // 日記削除
+        deleteDiary(id) {
+            axios.delete('/api/diaries/' + id)
+                .then((res) => {
+                    this.dialog = false;
+                    this.getDiaries();
+                });
         }
+    },
+    mounted() {
+        this.getDiaries();
     }
 }
 </script>

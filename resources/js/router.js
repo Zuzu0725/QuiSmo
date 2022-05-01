@@ -27,15 +27,16 @@ const router = new VueRouter({
             component: DiaryCreateComponent
         },
         {
-            path: "/diaries/edit/:id",
+            path: '/diaries/:diaryId',
+            name: 'diary.show',
+            component: DiaryEditComponent,
+            props: true
+        },
+        {
+            path: "/diaries/:diaryId/edit",
             name: "diary.edit",
             component: DiaryEditComponent,
-            props: route => ({
-                id: route.params.id,
-                date: route.params.date,
-                status: route.params.status,
-                comment: route.params.comment
-            })
+            props: true
         },
     ]
 });

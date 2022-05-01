@@ -6,7 +6,7 @@
         >
             <v-card-title class="justify-center pa-0 mb-5">日記編集</v-card-title>
 
-            <v-form>
+            <v-form ref="form" @submit.prevent>
                 <v-menu
                     transition="scale-transition"
                     offset-y
@@ -14,7 +14,7 @@
                 >
                     <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                            v-model="date"
+                            v-model="diary.date"
                             label="日付"
                             prepend-icon="mdi-calendar"
                             readonly
@@ -23,27 +23,11 @@
                         ></v-text-field>
                     </template>
                     <v-date-picker
-                        v-model="date"
+                        v-model="diary.date"
                         no-title
                         scrollable
                         color="red accent-2"
-                    >
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            text
-                            color="primary"
-                            @click="menu = false"
-                        >
-                            Cancel
-                        </v-btn>
-                        <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.menu.save(date)"
-                        >
-                            OK
-                        </v-btn>
-                    </v-date-picker>
+                    ></v-date-picker>
                 </v-menu>
 
                 <p class="mb-0" style="color: #616161;">気分</p>
@@ -51,22 +35,26 @@
                     color="primary"
                     dense
                     group
+                    v-model="diary.status"
                 >
                     <v-btn
                         icon
-                        v-bind:class="(status === 1) ? 'v-item-active v-btn--active' : ''"
+                        v-bind:class="(diary.status === 1) ? 'v-item-active v-btn--active' : ''"
+                        value="1"
                     >
                         <v-icon>mdi-emoticon</v-icon>
                     </v-btn>
                     <v-btn
                         icon
-                        v-bind:class="(status === 2) ? 'v-item-active v-btn--active' : ''"
+                        v-bind:class="(diary.status === 2) ? 'v-item-active v-btn--active' : ''"
+                        value="2"
                     >
                         <v-icon>mdi-emoticon-neutral</v-icon>
                     </v-btn>
                     <v-btn
                         icon
-                        v-bind:class="(status === 3) ? 'v-item-active v-btn--active' : ''"
+                        v-bind:class="(diary.status === 3) ? 'v-item-active v-btn--active' : ''"
+                        value="3"
                     >
                         <v-icon>mdi-emoticon-frown</v-icon>
                     </v-btn>
@@ -74,18 +62,20 @@
                 <v-textarea
                     label="コメント"
                     prepend-icon="mdi-comment"
-                    v-model="comment"
+                    v-model="diary.comment"
                 >
                 </v-textarea>
                 <v-btn
                     depressed
-                    color="primary"    
+                    color="primary"
+                    @click="submit"
                 >
                     登録する
                 </v-btn>
                 <v-btn
                     depressed
                     class="ml-2"
+                    @click="back"
                 >
                     キャンセル
                 </v-btn>
@@ -97,17 +87,34 @@
 <script>
 export default {
     props: {
-        id: Number,
-        date: String,
-        status: Number,
-        comment: String
+        diaryId: Number
     },
     data() {
         return {
+            diary: {},
             menu: false
         }
+    },
+    methods: {
+        getDiary() {
+            axios.get('/api/diaries/' + this.diaryId)
+                .then((res) => {
+                    this.diary = res.data;
+                });
+        },
+        submit() {
+            axios.put('/api/diaries/' + this.diaryId, this.diary)
+                .then((res) => {
+                    this.$router.push('/diaries');
+                });
+        },
+        back() {
+            this.$router.push('/diaries');
+        }
+    },
+    mounted() {
+        this.getDiary();
     }
-    
 }
 
 </script>
