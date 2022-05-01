@@ -5389,6 +5389,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -5396,59 +5397,58 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      dialog: false,
-      dialogItems: {
-        id: Number,
-        date: String,
-        status: Number,
-        comment: String
-      },
-      diaryIndex: -1,
-      diaries: [{
-        id: 1,
-        date: '2022-04-17',
-        status: 1,
-        comment: '問題なし'
-      }, {
-        id: 2,
-        date: '2022-04-18',
-        status: 2,
-        comment: '食後に吸いたくなった'
-      }, {
-        id: 3,
-        date: '2022-04-19',
-        status: 3,
-        comment: '飲みの場で吸ってしまった'
-      }]
+      diaries: [],
+      dialogItems: {},
+      dialog: false
     };
   },
   methods: {
-    diaryCreate: function diaryCreate() {
-      this.$router.push('/diary/create');
+    // 日記情報取得
+    getDiaries: function getDiaries() {
+      var _this = this;
+
+      axios.get('/api/diaries').then(function (res) {
+        _this.diaries = res.data;
+      });
     },
+    // 日記作成コンポーネントへの遷移
+    diaryCreate: function diaryCreate() {
+      this.$router.push('/diaries/create');
+    },
+    // 日記詳細ダイアログ
     showDiary: function showDiary(id) {
+      var _this2 = this;
+
       this.dialog = true;
-      this.diaryIndex = id - 1;
-      this.dialogItems.id = this.diaries[this.diaryIndex].id;
-      this.dialogItems.date = this.diaries[this.diaryIndex].date;
-      this.dialogItems.status = this.diaries[this.diaryIndex].status;
-      this.dialogItems.comment = this.diaries[this.diaryIndex].comment;
+      axios.get('/api/diaries/' + id).then(function (res) {
+        _this2.dialogItems = res.data;
+      });
     },
     closeDialog: function closeDialog() {
       this.dialog = false;
     },
+    // 日記編集画面へ遷移
     moveEdit: function moveEdit(id) {
-      this.diaryIndex = id - 1;
       this.$router.push({
         name: 'diary.edit',
         params: {
-          id: this.diaries[this.diaryIndex].id,
-          date: this.diaries[this.diaryIndex].date,
-          status: this.diaries[this.diaryIndex].status,
-          comment: this.diaries[this.diaryIndex].comment
+          diaryId: id
         }
       });
+    },
+    // 日記削除
+    deleteDiary: function deleteDiary(id) {
+      var _this3 = this;
+
+      axios["delete"]('/api/diaries/' + id).then(function (res) {
+        _this3.dialog = false;
+
+        _this3.getDiaries();
+      });
     }
+  },
+  mounted: function mounted() {
+    this.getDiaries();
   }
 });
 
@@ -5541,23 +5541,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+      diary: {
+        date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)
+      },
       menu: false
     };
+  },
+  methods: {
+    submit: function submit() {
+      var _this = this;
+
+      axios.post('/api/diaries', this.diary).then(function (res) {
+        _this.$router.push('/diaries');
+      });
+    }
   }
 });
 
@@ -5660,27 +5660,37 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
-    id: Number,
-    date: String,
-    status: Number,
-    comment: String
+    diaryId: Number
   },
   data: function data() {
     return {
+      diary: {},
       menu: false
     };
+  },
+  methods: {
+    getDiary: function getDiary() {
+      var _this = this;
+
+      axios.get('/api/diaries/' + this.diaryId).then(function (res) {
+        _this.diary = res.data;
+      });
+    },
+    submit: function submit() {
+      var _this2 = this;
+
+      axios.put('/api/diaries/' + this.diaryId, this.diary).then(function (res) {
+        _this2.$router.push('/diaries');
+      });
+    },
+    back: function back() {
+      this.$router.push('/diaries');
+    }
+  },
+  mounted: function mounted() {
+    this.getDiary();
   }
 });
 
@@ -5697,6 +5707,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5967,17 +5984,15 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     name: "diary.create",
     component: _components_diarys_DiaryCreateComponent_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   }, {
-    path: "/diaries/edit/:id",
+    path: '/diaries/:diaryId',
+    name: 'diary.show',
+    component: _components_diarys_DiaryEditComponent_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    props: true
+  }, {
+    path: "/diaries/:diaryId/edit",
     name: "diary.edit",
     component: _components_diarys_DiaryEditComponent_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
-    props: function props(route) {
-      return {
-        id: route.params.id,
-        date: route.params.date,
-        status: route.params.status,
-        comment: route.params.comment
-      };
-    }
+    props: true
   }]
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
@@ -29689,7 +29704,11 @@ var render = function () {
             [
               _c("diary-show", {
                 attrs: { dialogItems: _vm.dialogItems },
-                on: { close: _vm.closeDialog, edit: _vm.moveEdit },
+                on: {
+                  close: _vm.closeDialog,
+                  edit: _vm.moveEdit,
+                  delete: _vm.deleteDiary,
+                },
               }),
             ],
             1
@@ -29738,6 +29757,14 @@ var render = function () {
           _vm._v(" "),
           _c(
             "v-form",
+            {
+              ref: "form",
+              on: {
+                submit: function ($event) {
+                  $event.preventDefault()
+                },
+              },
+            },
             [
               _c(
                 "v-menu",
@@ -29765,11 +29792,11 @@ var render = function () {
                                     readonly: "",
                                   },
                                   model: {
-                                    value: _vm.date,
+                                    value: _vm.diary.date,
                                     callback: function ($$v) {
-                                      _vm.date = $$v
+                                      _vm.$set(_vm.diary, "date", $$v)
                                     },
-                                    expression: "date",
+                                    expression: "diary.date",
                                   },
                                 },
                                 "v-text-field",
@@ -29786,61 +29813,20 @@ var render = function () {
                 },
                 [
                   _vm._v(" "),
-                  _c(
-                    "v-date-picker",
-                    {
-                      attrs: {
-                        "no-title": "",
-                        scrollable: "",
-                        color: "red accent-2",
-                      },
-                      model: {
-                        value: _vm.date,
-                        callback: function ($$v) {
-                          _vm.date = $$v
-                        },
-                        expression: "date",
-                      },
+                  _c("v-date-picker", {
+                    attrs: {
+                      "no-title": "",
+                      scrollable: "",
+                      color: "red accent-2",
                     },
-                    [
-                      _c("v-spacer"),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { text: "", color: "primary" },
-                          on: {
-                            click: function ($event) {
-                              _vm.menu = false
-                            },
-                          },
-                        },
-                        [
-                          _vm._v(
-                            "\n                        Cancel\n                    "
-                          ),
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { text: "", color: "primary" },
-                          on: {
-                            click: function ($event) {
-                              return _vm.$refs.menu.save(_vm.date)
-                            },
-                          },
-                        },
-                        [
-                          _vm._v(
-                            "\n                        OK\n                    "
-                          ),
-                        ]
-                      ),
-                    ],
-                    1
-                  ),
+                    model: {
+                      value: _vm.diary.date,
+                      callback: function ($$v) {
+                        _vm.$set(_vm.diary, "date", $$v)
+                      },
+                      expression: "diary.date",
+                    },
+                  }),
                 ],
                 1
               ),
@@ -29853,25 +29839,34 @@ var render = function () {
               _vm._v(" "),
               _c(
                 "v-btn-toggle",
-                { attrs: { color: "primary", dense: "", group: "" } },
+                {
+                  attrs: { color: "primary", dense: "", group: "" },
+                  model: {
+                    value: _vm.diary.status,
+                    callback: function ($$v) {
+                      _vm.$set(_vm.diary, "status", $$v)
+                    },
+                    expression: "diary.status",
+                  },
+                },
                 [
                   _c(
                     "v-btn",
-                    { attrs: { icon: "" } },
+                    { attrs: { icon: "", value: "1" } },
                     [_c("v-icon", [_vm._v("mdi-emoticon")])],
                     1
                   ),
                   _vm._v(" "),
                   _c(
                     "v-btn",
-                    { attrs: { icon: "" } },
+                    { attrs: { icon: "", value: "2" } },
                     [_c("v-icon", [_vm._v("mdi-emoticon-neutral")])],
                     1
                   ),
                   _vm._v(" "),
                   _c(
                     "v-btn",
-                    { attrs: { icon: "" } },
+                    { attrs: { icon: "", value: "3" } },
                     [_c("v-icon", [_vm._v("mdi-emoticon-frown")])],
                     1
                   ),
@@ -29881,11 +29876,23 @@ var render = function () {
               _vm._v(" "),
               _c("v-textarea", {
                 attrs: { label: "コメント", "prepend-icon": "mdi-comment" },
+                model: {
+                  value: _vm.diary.comment,
+                  callback: function ($$v) {
+                    _vm.$set(_vm.diary, "comment", $$v)
+                  },
+                  expression: "diary.comment",
+                },
               }),
               _vm._v(" "),
-              _c("v-btn", { attrs: { depressed: "", color: "primary" } }, [
-                _vm._v("\n                    登録する\n                "),
-              ]),
+              _c(
+                "v-btn",
+                {
+                  attrs: { depressed: "", color: "primary" },
+                  on: { click: _vm.submit },
+                },
+                [_vm._v("\n                    登録する\n                ")]
+              ),
               _vm._v(" "),
               _c("v-btn", { staticClass: "ml-2", attrs: { depressed: "" } }, [
                 _vm._v("\n                    キャンセル\n                "),
@@ -29937,6 +29944,14 @@ var render = function () {
           _vm._v(" "),
           _c(
             "v-form",
+            {
+              ref: "form",
+              on: {
+                submit: function ($event) {
+                  $event.preventDefault()
+                },
+              },
+            },
             [
               _c(
                 "v-menu",
@@ -29964,11 +29979,11 @@ var render = function () {
                                     readonly: "",
                                   },
                                   model: {
-                                    value: _vm.date,
+                                    value: _vm.diary.date,
                                     callback: function ($$v) {
-                                      _vm.date = $$v
+                                      _vm.$set(_vm.diary, "date", $$v)
                                     },
-                                    expression: "date",
+                                    expression: "diary.date",
                                   },
                                 },
                                 "v-text-field",
@@ -29985,61 +30000,20 @@ var render = function () {
                 },
                 [
                   _vm._v(" "),
-                  _c(
-                    "v-date-picker",
-                    {
-                      attrs: {
-                        "no-title": "",
-                        scrollable: "",
-                        color: "red accent-2",
-                      },
-                      model: {
-                        value: _vm.date,
-                        callback: function ($$v) {
-                          _vm.date = $$v
-                        },
-                        expression: "date",
-                      },
+                  _c("v-date-picker", {
+                    attrs: {
+                      "no-title": "",
+                      scrollable: "",
+                      color: "red accent-2",
                     },
-                    [
-                      _c("v-spacer"),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { text: "", color: "primary" },
-                          on: {
-                            click: function ($event) {
-                              _vm.menu = false
-                            },
-                          },
-                        },
-                        [
-                          _vm._v(
-                            "\n                        Cancel\n                    "
-                          ),
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { text: "", color: "primary" },
-                          on: {
-                            click: function ($event) {
-                              return _vm.$refs.menu.save(_vm.date)
-                            },
-                          },
-                        },
-                        [
-                          _vm._v(
-                            "\n                        OK\n                    "
-                          ),
-                        ]
-                      ),
-                    ],
-                    1
-                  ),
+                    model: {
+                      value: _vm.diary.date,
+                      callback: function ($$v) {
+                        _vm.$set(_vm.diary, "date", $$v)
+                      },
+                      expression: "diary.date",
+                    },
+                  }),
                 ],
                 1
               ),
@@ -30052,14 +30026,25 @@ var render = function () {
               _vm._v(" "),
               _c(
                 "v-btn-toggle",
-                { attrs: { color: "primary", dense: "", group: "" } },
+                {
+                  attrs: { color: "primary", dense: "", group: "" },
+                  model: {
+                    value: _vm.diary.status,
+                    callback: function ($$v) {
+                      _vm.$set(_vm.diary, "status", $$v)
+                    },
+                    expression: "diary.status",
+                  },
+                },
                 [
                   _c(
                     "v-btn",
                     {
                       class:
-                        _vm.status === 1 ? "v-item-active v-btn--active" : "",
-                      attrs: { icon: "" },
+                        _vm.diary.status === 1
+                          ? "v-item-active v-btn--active"
+                          : "",
+                      attrs: { icon: "", value: "1" },
                     },
                     [_c("v-icon", [_vm._v("mdi-emoticon")])],
                     1
@@ -30069,8 +30054,10 @@ var render = function () {
                     "v-btn",
                     {
                       class:
-                        _vm.status === 2 ? "v-item-active v-btn--active" : "",
-                      attrs: { icon: "" },
+                        _vm.diary.status === 2
+                          ? "v-item-active v-btn--active"
+                          : "",
+                      attrs: { icon: "", value: "2" },
                     },
                     [_c("v-icon", [_vm._v("mdi-emoticon-neutral")])],
                     1
@@ -30080,8 +30067,10 @@ var render = function () {
                     "v-btn",
                     {
                       class:
-                        _vm.status === 3 ? "v-item-active v-btn--active" : "",
-                      attrs: { icon: "" },
+                        _vm.diary.status === 3
+                          ? "v-item-active v-btn--active"
+                          : "",
+                      attrs: { icon: "", value: "3" },
                     },
                     [_c("v-icon", [_vm._v("mdi-emoticon-frown")])],
                     1
@@ -30093,21 +30082,32 @@ var render = function () {
               _c("v-textarea", {
                 attrs: { label: "コメント", "prepend-icon": "mdi-comment" },
                 model: {
-                  value: _vm.comment,
+                  value: _vm.diary.comment,
                   callback: function ($$v) {
-                    _vm.comment = $$v
+                    _vm.$set(_vm.diary, "comment", $$v)
                   },
-                  expression: "comment",
+                  expression: "diary.comment",
                 },
               }),
               _vm._v(" "),
-              _c("v-btn", { attrs: { depressed: "", color: "primary" } }, [
-                _vm._v("\n                登録する\n            "),
-              ]),
+              _c(
+                "v-btn",
+                {
+                  attrs: { depressed: "", color: "primary" },
+                  on: { click: _vm.submit },
+                },
+                [_vm._v("\n                登録する\n            ")]
+              ),
               _vm._v(" "),
-              _c("v-btn", { staticClass: "ml-2", attrs: { depressed: "" } }, [
-                _vm._v("\n                キャンセル\n            "),
-              ]),
+              _c(
+                "v-btn",
+                {
+                  staticClass: "ml-2",
+                  attrs: { depressed: "" },
+                  on: { click: _vm.back },
+                },
+                [_vm._v("\n                キャンセル\n            ")]
+              ),
             ],
             1
           ),
@@ -30147,7 +30147,25 @@ var render = function () {
       _c(
         "v-toolbar",
         { attrs: { color: "grey lighten-3", flat: "" } },
-        [_c("v-toolbar-title", [_vm._v(_vm._s(_vm.dialogItems.date))])],
+        [
+          _c("v-toolbar-title", [_vm._v(_vm._s(_vm.dialogItems.date))]),
+          _vm._v(" "),
+          _c("v-spacer"),
+          _vm._v(" "),
+          _c(
+            "v-btn",
+            {
+              attrs: { icon: "" },
+              on: {
+                click: function ($event) {
+                  return _vm.$emit("delete", _vm.dialogItems.id)
+                },
+              },
+            },
+            [_c("v-icon", [_vm._v("mdi-delete")])],
+            1
+          ),
+        ],
         1
       ),
       _vm._v(" "),
