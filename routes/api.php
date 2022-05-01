@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DiaryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/diaries', [DiaryController::class, 'index']);
+Route::post('/diaries', [DiaryController::class, 'store']);
+Route::put('/diaries/{diary}', [DiaryController::class, 'update']);
+Route::delete('/diaries/{diary}', [DiaryController::class, 'destroy']);
