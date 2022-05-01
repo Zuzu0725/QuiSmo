@@ -17,17 +17,17 @@ const router = new VueRouter({
             component: HomeComponent
         },
         {
-            path: "/diary",
+            path: "/diaries",
             name: "diary",
             component: DiaryComponent
         },
         {
-            path: "/diary/create",
+            path: "/diaries/create",
             name: "diary.create",
             component: DiaryCreateComponent
         },
         {
-            path: "/diary/edit/:id",
+            path: "/diaries/edit/:id",
             name: "diary.edit",
             component: DiaryEditComponent,
             props: route => ({

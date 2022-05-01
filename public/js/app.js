@@ -5959,15 +5959,15 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     name: "home",
     component: _components_HomeComponent_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   }, {
-    path: "/diary",
+    path: "/diaries",
     name: "diary",
     component: _components_diarys_DiaryComponent_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   }, {
-    path: "/diary/create",
+    path: "/diaries/create",
     name: "diary.create",
     component: _components_diarys_DiaryCreateComponent_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   }, {
-    path: "/diary/edit/:id",
+    path: "/diaries/edit/:id",
     name: "diary.edit",
     component: _components_diarys_DiaryEditComponent_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
     props: function props(route) {
